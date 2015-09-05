@@ -53,7 +53,8 @@ int isClashed(MOVE_OBJECT* myobj, MOVE_OBJECT* enemy) {
 void Show(STAGE* stage) {
 	int w, h;
 	for (h = 0; h < stage->height; h++) {
-		for (w = 0; w < stage->width; w++) printf("%c", stage->grids[w + h * stage->width]);
+		for (w = 0; w < stage->width; w++)
+			printf("%c", stage->grids[w + h * stage->width]);
 		printf("\n");
 	}
 	printf("\n");
@@ -81,17 +82,17 @@ void ShowAll(STAGE* stage, MOVE_OBJECT* objList, int nMoveObj) {
 int ReadStage(char* fname, STAGE* stage) {
 	FILE *fp;
 
-	if ((fp = fopen(fname, "r")) == NULL) {	/* オープン */
-		printf("\aファイルをオープンできません。\n");
+	if ((fp = fopen(fname, "r")) == NULL) {	/* Unable to open */
+		printf("Unabele to open file.\n");
 	} else {
 		int nMoveObj = 0;
 	    int n = 0;
 		char* buf = (char*)malloc( sizeof( char ) * 100 );
 		
-	    /* ファイルの終端まで1行ずつ文字を読み取る */
+	    /* Read every line */
 	    while ( fgets(buf, 100, fp) != NULL ) {
 	    	int i = 0;
-	    	while (buf[i] != '\n') {
+	    	while (buf[i] != '\n' && buf[i] != '\r') {
 	    		char c = buf[i];
 	    		stage->grids[n] = c;
 	    		if (c != '.' && c != ' ' && c != '#') nMoveObj++;
@@ -104,7 +105,7 @@ int ReadStage(char* fname, STAGE* stage) {
 	    if (n / stage->width != stage->height || n % stage->width != 0) printf("Warning.\n");
 	    
 	    free(buf);
-	    fclose(fp);	/* クローズ */
+	    fclose(fp);	/* Close file */
 	    
 	    return nMoveObj;
 	}

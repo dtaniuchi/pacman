@@ -24,30 +24,31 @@ int main(int argc, char *argv[])
 	char input;
 
 	
-	/* 初期化 */
-	stage->width = 0; stage->height = 0; stage->grids = (char*)malloc( sizeof( char ) * STAGE_SIZE );
+	/* Read stage filename */
+	stage->width = 0; stage->height = 0;
+	stage->grids = (char*)malloc( sizeof( char ) * STAGE_SIZE );
 
 	if (argc == 2) fname = argv[1];
 	else
 	{
-		fname = (char*)malloc( sizeof( char ) * FILENAME_MAX );		/* ファイル名 */
-		printf("ファイル名：");
+		fname = (char*)malloc( sizeof( char ) * FILENAME_MAX );
+		printf("Input stage filename.\n");
 		scanf("%s", fname);
 	}
 
-	/* ステージの読み込み */
+	/* Read stage */
 	nMoveObj = ReadStage(fname, stage);
 	free(fname);
 	
-	/* 読み込んだステージを表示 */
+	/* Display stage */ 
 	Show(stage);
 	
 	objList = (MOVE_OBJECT*)malloc(sizeof(MOVE_OBJECT) * nMoveObj);
-	if (nMoveObj != MakeMoveObjects(stage, objList)) printf("Warning.\n");
-	
-	Search(stage, objList, nMoveObj);
+	if (nMoveObj != MakeMoveObjects(stage, objList))
+		printf("Warning\n");
 
-/*
+//	Search(stage, objList, nMoveObj);
+
 	while (1) {
 		d = COUNT;
 		input = ' ';
@@ -74,7 +75,7 @@ int main(int argc, char *argv[])
 			case '\n':
 				continue;
 			default:
-				printf("不正な入力です。\n");
+				printf("Warning?\n");
 				break;
 		}
 
@@ -84,10 +85,11 @@ int main(int argc, char *argv[])
 			ShowAll(stage, objList, nMoveObj);
 		}
 		
-		if (CheckClash(objList, nMoveObj)) { printf("Clashed...!\n"); break; }
-		if (CheckClear(stage)) { printf("Cleared!\n"); break; }
+		if (CheckClash(objList, nMoveObj))
+		 { printf("Clashed...!\n"); break; }
+		if (CheckClear(stage))
+		 { printf("Cleared!\n"); break; }
 	}
-*/
 
 	free(stage->grids);
 	free(objList);
