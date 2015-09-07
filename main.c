@@ -1,5 +1,5 @@
 /*
- *	DevQuiz Pacman
+	DevQuiz Pacman
 	 : http://koriym.github.io/gdd2010-pacman/
 	 : https://github.com/koriym/gdd2010-pacman
  */
@@ -11,6 +11,7 @@
 #include "header2.h"
 
 #define STAGE_SIZE 1000
+#define FILENAME_SIZE 20
 
 int main(int argc, char *argv[])
 {
@@ -18,28 +19,30 @@ int main(int argc, char *argv[])
 	MOVE_OBJECT* objList;
 	int nMoveObj;
 
-	char* fname;
-	
+	char* fname = NULL;
 	DIRECTION d;
 	char input;
 
-	
-	/* Read stage filename */
 	stage->width = 0; stage->height = 0;
 	stage->grids = (char*)malloc( sizeof( char ) * STAGE_SIZE );
 
-	if (argc == 2) fname = argv[1];
+	/* Read stage */
+	if (argc == 2) {
+		nMoveObj = ReadStage(argv[1], stage); 
+	}
 	else
 	{
-		fname = (char*)malloc( sizeof( char ) * FILENAME_MAX );
+		fname = (char*)malloc(sizeof(char) * FILENAME_SIZE);
 		printf("Input stage filename.\n");
-		scanf("%s", fname);
+		if (fname != NULL) {
+			scanf("%s", fname);
+			nMoveObj = ReadStage(fname, stage);
+		}
+		else{ printf("Unable to get memory.\n"); }
+		free(fname);
+
 	}
 
-	/* Read stage */
-	nMoveObj = ReadStage(fname, stage);
-	free(fname);
-	
 	/* Display stage */ 
 	Show(stage);
 	
@@ -72,8 +75,6 @@ int main(int argc, char *argv[])
 			case 'q':
 				d = STAY;
 				break;
-			case '\n':
-				continue;
 			default:
 				printf("Warning?\n");
 				break;

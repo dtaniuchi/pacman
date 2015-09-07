@@ -1,5 +1,5 @@
 /*
-	ヘッダファイル
+	header1.h
 */
 
 #ifndef H1

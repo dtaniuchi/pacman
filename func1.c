@@ -81,7 +81,7 @@ void ShowAll(STAGE* stage, MOVE_OBJECT* objList, int nMoveObj) {
 
 int ReadStage(char* fname, STAGE* stage) {
 	FILE *fp;
-
+//printf("%s\n", fname);
 	if ((fp = fopen(fname, "r")) == NULL) {	/* Unable to open */
 		printf("Unabele to open file.\n");
 	} else {
@@ -102,7 +102,8 @@ int ReadStage(char* fname, STAGE* stage) {
 	    	else if (stage->width != i) printf("Warning.\n");
 	    	stage->height++;
 	    }
-	    if (n / stage->width != stage->height || n % stage->width != 0) printf("Warning.\n");
+	    if (n / stage->width != stage->height || n % stage->width != 0)
+		printf("Warning.\n");
 	    
 	    free(buf);
 	    fclose(fp);	/* Close file */
@@ -290,12 +291,14 @@ void ProceedEnemy(STAGE* stage, MOVE_OBJECT* objList, int nMoveObj) {
 		POSITION_TYPE pt = GetPositionType(stage, obj->x, obj->y);
 		DIRECTION d = STAY;
 		
-		if (obj->type != V && obj->type != H && obj->type != L && obj->type != R && obj->type != J) continue;
+		if (obj->type != V && obj->type != H
+		 && obj->type != L && obj->type != R && obj->type != J) continue;
 		
 		if (obj->prex == -1 || obj->prey == -1) {
 			int j;
 			for (j = 0; j < COUNT; j++) {
-				if (isProceedableD(stage, obj->x, obj->y, j)) { d = j; break; }
+				if (isProceedableD(stage, obj->x, obj->y, j))
+				{ d = j; break; }
 			}
 		}
 		
@@ -304,24 +307,28 @@ void ProceedEnemy(STAGE* stage, MOVE_OBJECT* objList, int nMoveObj) {
 			int dy = obj->y - obj->prey;
 			
 			switch(pt) {	
-			/* çsÇ´é~Ç‹ÇË */
+			/* END */
 			case END:
 			{
-				for (d = 0; d < COUNT; d++) { if (isProceedableD(stage, obj->x, obj->y, d)) break; }
+				for (d = 0; d < COUNT; d++) {
+					if (isProceedableD(stage, obj->x, obj->y, d)) break;
+			}
 				if (d == STAY) printf("Warning: END\n");
 				break;
 			}
-			/* í òH */
+			/* PATH */
 			case PATH:
 			{
 				DIRECTION notd;
 				if (dx == 0 && dy != 0) notd = (dy > 0) ? UP : DOWN;
 				else if (dx != 0 && dy == 0) notd = (dx > 0) ? LEFT : RIGHT;
-				for (d = 0; d < COUNT; d++) { if (d != notd && isProceedableD(stage, obj->x, obj->y, d)) break; }
+				for (d = 0; d < COUNT; d++) {
+					if (d != notd &&
+						isProceedableD(stage, obj->x, obj->y, d)) break; }
 				if (d == STAY) printf("Warning: PATH\n");
 				break;
 			}
-			/* åç∑ì_ */
+			/* INTERSECTION */
 			case INTERSECTION:
 				switch(obj->type) {
 				case V:
@@ -341,7 +348,7 @@ void ProceedEnemy(STAGE* stage, MOVE_OBJECT* objList, int nMoveObj) {
 				}
 				
 				break;
-			/* ìÆçÏïsâ¬ */
+			/* OTHERS */
 			default:
 				printf("Warning: 4Walls\n");
 				break;
@@ -383,9 +390,11 @@ DIRECTION ProceedEnemyVHOnIS(MOVE_OBJECT* obj, STAGE* stage, MOVE_OBJECT* objLis
 	int my = -1;
 	int j;
 
-	if (obj->type != V && obj->type != H) { printf("Warning VH: %c\n", myGetChar(obj->type)); return d; }
+	if (obj->type != V && obj->type != H) {
+		printf("Warning VH: %c\n", myGetChar(obj->type)); return d;
+	}
 
-	/* é©ã@à íuÇÃîcà¨ */
+	/* Detect M */
 	for (j = 0; j < nMoveObj; j++) {
 		MOVE_OBJECT* o = &objList[j];
 		if (o->type == M) {
@@ -394,39 +403,38 @@ DIRECTION ProceedEnemyVHOnIS(MOVE_OBJECT* obj, STAGE* stage, MOVE_OBJECT* objLis
 		}
 	}
 				
-	/* à⁄ìÆï˚å¸ÇÃåàíË */
+	/* Proceed VH */ 
 	if (mx != -1 && my != -1) {
 		int dx = x - mx;
 		int dy = y - my;
 		
-		/* ìGV */
+		/* Case V */
 		if (obj->type == V) {
-			/* èåè1 */
+			/* Condition 1 */
 			if (d == STAY && dy != 0) {
 				if (dy > 0 && isProceedable(stage, x, y - 1)) d = UP;
 				else if (dy < 0 && isProceedable(stage, x, y + 1)) d = DOWN;
 			}
-			/* èåè2 */
+			/* Condition 2 */
 			if (d == STAY && dx != 0) {
 				if (dx > 0 && isProceedable(stage, x - 1, y)) d = LEFT;
 				else if (dy < 0 && isProceedable(stage, x + 1, y)) d = RIGHT;
 			}
 		}
-		/* ìGH */
+		/* Case H */
 		else if (obj->type == H) {
-			/* èåè2 */
+			/* Condition 2 */
 			if (d == STAY && dx != 0) {
 				if (dx > 0 && isProceedable(stage, x - 1, y)) d = LEFT;
 				else if (dy < 0 && isProceedable(stage, x + 1, y)) d = RIGHT;
 			}
-			/* èåè1 */
+			/* Condition 1 */
 			if (d == STAY && dy != 0) {
 				if (dy > 0 && isProceedable(stage, x, y - 1)) d = UP;
 				else if (dy < 0 && isProceedable(stage, x, y + 1)) d = DOWN;
 			}
 		}
-		/* ìGV•Hã§í  */
-		/* èåè3 */
+		/* Condition 3 */
 		if (d == STAY) {
 			for (j = 0; j < COUNT; j++) {
 				if (isProceedableD(stage, x, y, j)) d = j;
@@ -445,7 +453,9 @@ DIRECTION ProceedEnemyLROnIS(MOVE_OBJECT* obj, STAGE* stage) {
 	int dx, dy;
 	int i;
 
-	if (obj->type != L && obj->type != R) { printf("Warning LR: %c\n", myGetChar(obj->type)); return d; }
+	if (obj->type != L && obj->type != R) {
+		printf("Warning LR: %c\n", myGetChar(obj->type)); return d;
+	}
 
 	dx = obj->x - obj->prex;
 	dy = obj->y - obj->prey;

@@ -1,11 +1,11 @@
 PROGRAM = main
 OBJS = main.o func1.o func2.o
 CC = gcc
-CFLAGS = -Wall -O2
+CFLAGS = -Wall -O2 -g
 LOADLIBES = -lm
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(OBJS) -o $(PROGRAM) $(CFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(PROGRAM)
 
 main.o: main.c
 	$(CC) -c main.c
